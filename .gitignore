@@ -1,3 +1,5 @@
 *.tfvars
 .terraform.lock.hcl
 *.key
+.DS_Store
+.terraform

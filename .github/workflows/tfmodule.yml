@@ -1,5 +1,13 @@
 name: Terraform Module Build
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - 'main'
+  workflow_dispatch:
+
 jobs:
   # tflint:
   terrascan:
@@ -25,7 +33,6 @@ jobs:
         #skip_rules:
         #config_path:
         #find_vulnerabilities:
-
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v1
       with:
@@ -57,4 +64,17 @@ jobs:
       working-directory: tests
       run: go test -v
 
-  # tag_repo:
+    - name: Bump version and push tag
+      id: tag_version
+      uses: mathieudutour/github-tag-action@v5.6
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    - name: Create a GitHub release
+      uses: ncipollo/release-action@v1
+      with:
+        tag: ${{ steps.tag_version.outputs.new_tag }}
+        name: Release ${{ steps.tag_version.outputs.new_tag }}
+        body: ${{ steps.tag_version.outputs.changelog }}
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
