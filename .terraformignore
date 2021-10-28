@@ -1,0 +1,6 @@
+*.yml
+*.yaml
+*.md
+.github
+examples
+tests

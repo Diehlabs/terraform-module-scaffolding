@@ -1,0 +1,60 @@
+name: Terraform Module Build
+on: [push, pull_request]
+jobs:
+  # tflint:
+  terrascan:
+    runs-on: ubuntu-latest
+    name: terrascan-action
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      # https://github.com/marketplace/actions/terrascan-iac-scanner
+    - name: Run Terrascan
+      id: terrascan
+      uses: accurics/terrascan-action@main
+      with:
+        iac_type: 'terraform'
+        iac_version: 'v14'
+        policy_type: 'azure'
+        only_warn: true
+        verbose: true
+        sarif_upload: true
+        #non_recursive:
+        iac_dir: /
+        #policy_path:
+        #skip_rules:
+        #config_path:
+        #find_vulnerabilities:
+
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: terrascan.sarif
+
+  terratest_job:
+    runs-on: ubuntu-latest
+    name: terratest-action
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_wrapper: false
+        terraform_version: 1.0.8
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.15
+
+    - name: Setup Dependencies
+      working-directory: tests
+      #run:  go get -v -t -d && go mod tidy
+      run: go mod init tests
+
+    - name: Test
+      working-directory: tests
+      run: go test -v
+
+  # tag_repo:
