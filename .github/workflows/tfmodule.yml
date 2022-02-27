@@ -2,7 +2,7 @@ name: Terraform Module Build
 on:
   push:
     branches:
-      - '*'
+      - '**'
   pull_request:
     branches:
       - 'main'
@@ -85,7 +85,7 @@ jobs:
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
         with:
-          sarif_file: checkov.sarif
+          sarif_file: results.sarif
 
   terratest_job:
     runs-on: ubuntu-latest
