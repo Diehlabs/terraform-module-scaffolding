@@ -18,16 +18,20 @@ jobs:
 
   terrascan:
     uses: Diehlabs/shared-workflows/.github/workflows/terrascan.yml@main
-    if: steps.tflint.outcome == 'success'
+    needs: tflint
+    if: success()
 
   checkov:
     uses: Diehlabs/shared-workflows/.github/workflows/checkov.yml@main
-    if: steps.tflint.outcome == 'success'
+    needs: tflint
+    if: success()
 
   terratest:
     uses: Diehlabs/shared-workflows/.github/workflows/terratest.yml@main
-    if: steps.tflint.outcome == 'success'
+    needs: tflint
+    if: success()
 
   tag:
     uses: Diehlabs/shared-workflows/.github/workflows/github-release.yml@main
-    if: steps.terratest.outcome == 'success'
+    needs: terratest
+    if: success()
