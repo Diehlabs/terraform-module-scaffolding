@@ -25,10 +25,12 @@ func (r *RunSettings) setDefaults() {
 		panic("No Terratest module provided")
 	}
 
+	r.workingDir = "../examples/build"
 	if ttwd := os.Getenv("TERRATEST_WORKING_DIR"); ttwd != "" {
 		r.workingDir = ttwd
 	}
 
+	r.tfCliPath = "/usr/local/bin/terraform"
 	if tfcp := os.Getenv("TF_CLI_PATH"); tfcp != "" {
 		r.tfCliPath = tfcp
 	}
