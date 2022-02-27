@@ -14,26 +14,4 @@ env:
 
 jobs:
   tflint:
-    uses: Diehlabs/shared-workflows/.github/workflows/tflint.yml@main
-
-  terrascan:
-    uses: Diehlabs/shared-workflows/.github/workflows/terrascan.yml@main
-    needs: tflint
-    if: success()
-
-  checkov:
-    uses: Diehlabs/shared-workflows/.github/workflows/checkov.yml@main
-    needs: tflint
-    if: success()
-
-  terratest:
-    uses: Diehlabs/shared-workflows/.github/workflows/terratest.yml@main
-    needs: tflint
-    if: success()
-
-  tag:
-    uses: Diehlabs/shared-workflows/.github/workflows/github-release.yml@main
-    needs:
-      - terratest
-      - checkov
-    if: success()
+    uses: Diehlabs/shared-workflows/.github/workflows/terraform-module.yml@main
