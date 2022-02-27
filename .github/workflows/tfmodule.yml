@@ -37,5 +37,7 @@ jobs:
 
   release:
     uses: Diehlabs/shared-workflows/.github/workflows/github-release.yml@main
-    needs: terraform-module-ci
+    needs:
+      - tflint
+      - terratest
     if: success() && github.ref == 'refs/heads/main'
