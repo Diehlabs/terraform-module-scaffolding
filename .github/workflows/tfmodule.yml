@@ -33,5 +33,7 @@ jobs:
 
   tag:
     uses: Diehlabs/shared-workflows/.github/workflows/github-release.yml@main
-    needs: terratest
+    needs:
+      - terratest
+      - checkov
     if: success()
