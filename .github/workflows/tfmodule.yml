@@ -58,10 +58,34 @@ jobs:
         #skip_rules:
         #config_path:
         #find_vulnerabilities:
+
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v1
       with:
         sarif_file: terrascan.sarif
+
+  checkov:
+    runs-on: ubuntu-latest
+    name: checkov-action
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@master
+
+      - name: Run Checkov action
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          soft_fail: true # optional: do not return an error code if there are failed checks
+          framework: terraform # optional: run only on a specific infrastructure {cloudformation,terraform,kubernetes,all}
+          output_format: sarif # optional: the output format, one of: cli, json, junitxml, github_failed_only, or sarif. Default: sarif
+          download_external_modules: true # optional: download external terraform modules from public git repositories and terraform registry
+          container_user: 1000 # optional: Define what UID and / or what GID to run the container under to prevent permission issues
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: checkov.sarif
 
   terratest_job:
     runs-on: ubuntu-latest
@@ -73,20 +97,20 @@ jobs:
     - uses: hashicorp/setup-terraform@v1
       with:
         terraform_wrapper: false
-        terraform_version: 1.0.8
+        terraform_version: 1.1.6
 
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.15
+        go-version: 1.17
 
     - name: Setup Dependencies
-      working-directory: tests
-      #run:  go get -v -t -d && go mod tidy
-      run: go mod init tests
+      working-directory: test
+      run:  go get -v -t -d && go mod tidy
+      # run: go mod init test
 
     - name: Test
-      working-directory: tests
+      working-directory: test
       run: go test -v
 
     - name: Bump version and push tag
