@@ -15,20 +15,20 @@ env:
 
 jobs:
   tflint:
-    uses: Diehlabs/shared-workflows/tflint.yml@master
+    uses: Diehlabs/shared-workflows/.github/workflows/tflint.yml@master
 
   terrascan:
-    uses: Diehlabs/shared-workflows/terrascan.yml@master
+    uses: Diehlabs/shared-workflows/.github/workflows/terrascan.yml@master
     if: steps.tflint.outcome == 'success'
 
   checkov:
-    uses: Diehlabs/shared-workflows/checkov.yml@master
+    uses: Diehlabs/shared-workflows/.github/workflows/checkov.yml@master
     if: steps.tflint.outcome == 'success'
 
   terratest:
-    uses: Diehlabs/shared-workflows/terratest.yml@master
+    uses: Diehlabs/shared-workflows/.github/workflows/terratest.yml@master
     if: steps.tflint.outcome == 'success'
 
   tag:
-    uses: Diehlabs/shared-workflows/github-release.yml@master
+    uses: Diehlabs/shared-workflows/.github/workflows/github-release.yml@master
     if: steps.terratest.outcome == 'success'
