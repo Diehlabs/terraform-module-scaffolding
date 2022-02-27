@@ -19,14 +19,14 @@ jobs:
   terrascan:
     uses: Diehlabs/shared-workflows/.github/workflows/terrascan.yml@main
     with:
-      directory: ${{ env.GITHUB_WORKSPACE }}/examples/build
+      directory: "${{ env.GITHUB_WORKSPACE }}/examples/build"
     needs: tflint
     if: success()
 
   checkov:
     uses: Diehlabs/shared-workflows/.github/workflows/checkov.yml@main
     with:
-      directory: ${{ env.GITHUB_WORKSPACE }}/examples/build
+      directory: "${{ env.GITHUB_WORKSPACE }}/examples/build"
     needs: tflint
     if: success()
 
