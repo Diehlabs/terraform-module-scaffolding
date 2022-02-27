@@ -13,8 +13,27 @@ env:
   TFLINT_VERSION: 'v0.34.1'
 
 jobs:
-  terraform-module-ci:
-    uses: Diehlabs/shared-workflows/.github/workflows/terraform-module.yml@main
+  tflint:
+    uses: Diehlabs/shared-workflows/.github/workflows/tflint.yml@main
+
+  terrascan:
+    uses: Diehlabs/shared-workflows/.github/workflows/terrascan.yml@main
+    with:
+      directory: ${{ env.GITHUB_WORKSPACE }}/examples/build
+    needs: tflint
+    if: success()
+
+  checkov:
+    uses: Diehlabs/shared-workflows/.github/workflows/checkov.yml@main
+    with:
+      directory: ${{ env.GITHUB_WORKSPACE }}/examples/build
+    needs: tflint
+    if: success()
+
+  terratest:
+    uses: Diehlabs/shared-workflows/.github/workflows/terratest.yml@main
+    needs: tflint
+    if: success()
 
   release:
     uses: Diehlabs/shared-workflows/.github/workflows/github-release.yml@main
