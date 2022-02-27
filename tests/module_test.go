@@ -1,9 +1,10 @@
 package test
 
 import (
-	"random"
+	"os"
 	"testing"
 
+	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
@@ -13,9 +14,9 @@ type RunSettings struct {
 	t                         *testing.T
 	workingDir                string `default:"../examples/build"`
 	tfCliPath                 string `default:"/usr/local/bin/terraform"`
-	approleID                 string `default:nil`
-	secretID                  *auth.SecretID
-	vaultSecretPath           string `default:nil`
+	approleID                 string
+	// secretID                  *auth.SecretID
+	vaultSecretPath           string
 	uniqueID                  string
 }
 
@@ -24,12 +25,15 @@ func (r *RunSettings) setDefaults() {
 		panic("No Terratest module provided")
 	}
 
+	if ttwd := os.Getenv("TERRATEST_WORKING_DIR"); ttwd != "" {
+		r.workingDir = ttwd
+	}
+
 	if tfcp := os.Getenv("TF_CLI_PATH"); tfcp != "" {
-		r.tfCliPath = tfcp + "/terraform"
+		r.tfCliPath = tfcp
 	}
 
 	// VAULT items are used for interaction with HashiCorp Vault
-	r.vaultSecretPath = nil
 	if vsecp := os.Getenv("VAULT_SECRET_PATH"); vsecp != "" {
 		r.vaultSecretPath = vsecp
 	}
@@ -38,9 +42,9 @@ func (r *RunSettings) setDefaults() {
 		r.approleID = role_id
 	}
 
-	if wrapped_token := os.Getenv("VAULT_WRAPPED_TOKEN"); wrapped_token != "" {
-		r.secretID = &auth.SecretID{FromEnv: "VAULT_WRAPPED_TOKEN"}
-	}
+	// if wrapped_token := os.Getenv("VAULT_WRAPPED_TOKEN"); wrapped_token != "" {
+	// 	r.secretID = &auth.SecretID{FromEnv: "VAULT_WRAPPED_TOKEN"}
+	// }
 
 	if localId := os.Getenv("GITHUB_RUN_ID"); localId != "" {
 		r.uniqueID = localId
@@ -57,7 +61,7 @@ func (r *RunSettings) setTerraformOptions() {
 		TerraformDir:    r.workingDir,
 		TerraformBinary: r.tfCliPath,
 		Vars: map[string]interface{}{
-			unique_id = random.UniqueId(),
+			"unique_id": r.uniqueID,
 		},
 	})
 
@@ -83,19 +87,19 @@ func TestMyModule(t *testing.T) {
 	// fmt.Print(getSpn)
 
 	// Destroy the infra after testing is finished
-	// export SKIP_terraformDestroy to skip this stage
+	// export SKIP_terraformDestroy=true to skip this stage
 	defer test_structure.RunTestStage(t, "terraformDestroy", r.terraformDestroy)
 
 	// Deploy using Terraform
-	// export SKIP_deployTerraform to skip this stage
+	// export SKIP_deployTerraform=true to skip this stage
 	test_structure.RunTestStage(t, "deployTerraform", r.deployUsingTerraform)
 
 		// Redeploy using Terraform and ensure idempotency
-	// export SKIP_redeployTerraform to skip this stage
+	// export SKIP_redeployTerraform=true to skip this stage
 	test_structure.RunTestStage(t, "redeployTerraform", r.redeployUsingTerraform)
 
 	// Perform tests
-	// export SKIP_runTests to skip this stage
+	// export SKIP_runTests=true to skip this stage
 	test_structure.RunTestStage(t, "runTests", r.runTests)
 
 }
@@ -114,8 +118,8 @@ func (r *RunSettings) runTests() {
 	terraformOptions := test_structure.LoadTerraformOptions(r.t, r.workingDir)
 	// sample test used for this templated repo
 	expectedOutput := "Hello "+r.uniqueID
-	output := terraform.Output(t, terraformOptions, "hello_world")
-	assert.Equal(r,t, expectedOutput, output)
+	output := terraform.Output(r.t, terraformOptions, "hello_world")
+	assert.Equal(r.t, expectedOutput, output)
 }
 
 func (r *RunSettings) terraformDestroy() {
