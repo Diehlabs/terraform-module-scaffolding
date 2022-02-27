@@ -13,5 +13,10 @@ env:
   TFLINT_VERSION: 'v0.34.1'
 
 jobs:
-  tflint:
+  terraform-module-ci:
     uses: Diehlabs/shared-workflows/.github/workflows/terraform-module.yml@main
+
+  release:
+    uses: Diehlabs/shared-workflows/.github/workflows/github-release.yml@main
+    needs: terraform-module-ci
+    if: success() && github.ref == 'refs/heads/main'
