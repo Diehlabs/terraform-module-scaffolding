@@ -15,7 +15,7 @@ env:
 
 jobs:
   tflint:
-    uses: "Diehlabs/shared-workflows/.github/workflows/tflint.yml@${{ env.WORKFLOWS_REF }}"
+    uses: Diehlabs/shared-workflows/.github/workflows/tflint.yml@master
 
   terrascan:
     uses: Diehlabs/shared-workflows/.github/workflows/terrascan.yml@master
