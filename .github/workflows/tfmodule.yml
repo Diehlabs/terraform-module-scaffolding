@@ -14,29 +14,29 @@ env:
 
 jobs:
   tflint:
-    uses: Diehlabs/shared-workflows/.github/workflows/tflint.yml@develop
+    uses: Diehlabs/shared-workflows/.github/workflows/tflint.yml@feature/develop
 
   terrascan:
-    uses: Diehlabs/shared-workflows/.github/workflows/terrascan.yml@develop
+    uses: Diehlabs/shared-workflows/.github/workflows/terrascan.yml@feature/develop
     with:
       directory: ${{ github.workspace }}/examples/build
     needs: tflint
     if: success()
 
   checkov:
-    uses: Diehlabs/shared-workflows/.github/workflows/checkov.yml@develop
+    uses: Diehlabs/shared-workflows/.github/workflows/checkov.yml@feature/develop
     with:
       directory: ${{ github.workspace }}/examples/build
     needs: tflint
     if: success()
 
   terratest:
-    uses: Diehlabs/shared-workflows/.github/workflows/terratest.yml@develop
+    uses: Diehlabs/shared-workflows/.github/workflows/terratest.yml@feature/develop
     needs: tflint
     if: success()
 
   release:
-    uses: Diehlabs/shared-workflows/.github/workflows/github-release.yml@develop
+    uses: Diehlabs/shared-workflows/.github/workflows/github-release.yml@feature/develop
     needs:
       - tflint
       - terratest
