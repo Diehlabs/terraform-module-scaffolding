@@ -16,12 +16,12 @@ jobs:
   tflint:
     uses: Diehlabs/shared-workflows/.github/workflows/tflint.yml@feature/develop
 
-  terrascan:
-    uses: Diehlabs/shared-workflows/.github/workflows/terrascan.yml@feature/develop
-    with:
-      directory: ${{ github.workspace }}/examples/build
-    needs: tflint
-    if: success()
+  # terrascan:
+  #   uses: Diehlabs/shared-workflows/.github/workflows/terrascan.yml@feature/develop
+  #   with:
+  #     directory: ${{ github.workspace }}/examples/build
+  #   needs: tflint
+  #   if: success()
 
   checkov:
     uses: Diehlabs/shared-workflows/.github/workflows/checkov.yml@feature/develop

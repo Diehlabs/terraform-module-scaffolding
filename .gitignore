@@ -1,8 +1,9 @@
-*.tfvars
-.terraform.lock.hcl
-*.key
 .DS_Store
+*.key
+
+*.tfvars
+**.tfstate*
+
+.terraform.lock.hcl
 .terraform
 .test-data
-.terraform.lock.hcl
-*.tfstate*
