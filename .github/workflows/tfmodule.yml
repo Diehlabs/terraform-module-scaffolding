@@ -15,11 +15,11 @@ jobs:
     name: terrascan-action
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2
       # https://github.com/marketplace/actions/terrascan-iac-scanner
     - name: Run Terrascan
       id: terrascan
-      uses: accurics/terrascan-action@main
+      uses: accurics/terrascan-action@a4b0f7ec5fb3c4c66b8e76d824d958002f6ce12c # main
       with:
         iac_type: 'terraform'
         iac_version: 'v14'
@@ -34,7 +34,7 @@ jobs:
         #config_path:
         #find_vulnerabilities:
     - name: Upload SARIF file
-      uses: github/codeql-action/upload-sarif@v1
+      uses: github/codeql-action/upload-sarif@231aa2c8a89117b126725a0e11897209b7118144 # v1
       with:
         sarif_file: terrascan.sarif
 
@@ -43,15 +43,15 @@ jobs:
     name: terratest-action
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2
 
-    - uses: hashicorp/setup-terraform@v1
+    - uses: hashicorp/setup-terraform@ed3a0531877aca392eb870f440d9ae7aba83a6bd # v1
       with:
         terraform_wrapper: false
         terraform_version: 1.0.8
 
     - name: Set up Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@bfdd3570ce990073878bf10f6b2d79082de49492 # v2
       with:
         go-version: 1.15
 
@@ -66,13 +66,13 @@ jobs:
 
     - name: Bump version and push tag
       id: tag_version
-      uses: mathieudutour/github-tag-action@v5.6
+      uses: mathieudutour/github-tag-action@4c5d8c555a7cc4dca5e65d90b67dcddbb52ef77e # v5.6
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     - name: Create a GitHub release
-      uses: ncipollo/release-action@v1
+      uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1
       with:
         tag: ${{ steps.tag_version.outputs.new_tag }}
         name: Release ${{ steps.tag_version.outputs.new_tag }}
