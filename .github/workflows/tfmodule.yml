@@ -15,7 +15,7 @@ jobs:
     name: terrascan-action
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v5
       # https://github.com/marketplace/actions/terrascan-iac-scanner
     - name: Run Terrascan
       id: terrascan
@@ -34,7 +34,7 @@ jobs:
         #config_path:
         #find_vulnerabilities:
     - name: Upload SARIF file
-      uses: github/codeql-action/upload-sarif@v1
+      uses: github/codeql-action/upload-sarif@v4
       with:
         sarif_file: terrascan.sarif
 
@@ -43,22 +43,18 @@ jobs:
     name: terratest-action
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v5
 
-    - uses: hashicorp/setup-terraform@v1
+    - uses: hashicorp/setup-terraform@v3
       with:
         terraform_wrapper: false
         terraform_version: 1.0.8
 
     - name: Set up Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v6
       with:
-        go-version: 1.15
-
-    - name: Setup Dependencies
-      working-directory: tests
-      #run:  go get -v -t -d && go mod tidy
-      run: go mod init tests
+        go-version-file: tests/go.mod
+        cache-dependency-path: tests/go.sum
 
     - name: Test
       working-directory: tests
@@ -66,7 +62,7 @@ jobs:
 
     - name: Bump version and push tag
       id: tag_version
-      uses: mathieudutour/github-tag-action@v5.6
+      uses: mathieudutour/github-tag-action@v6.2
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
