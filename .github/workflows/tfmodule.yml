@@ -16,13 +16,13 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    uses: Diehlabs/shared-workflows/.github/workflows/terrascan.yml@terratest-go-mod
+    uses: Diehlabs/shared-workflows/.github/workflows/terrascan.yml@main
 
   terratest:
     permissions:
       contents: read
       checks: write
-    uses: Diehlabs/shared-workflows/.github/workflows/terratest.yml@terratest-go-mod
+    uses: Diehlabs/shared-workflows/.github/workflows/terratest.yml@main
     with:
       terraform_version: 1.0.8
       working_directory: tests
@@ -32,4 +32,4 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: write
-    uses: Diehlabs/shared-workflows/.github/workflows/github-release.yml@terratest-go-mod
+    uses: Diehlabs/shared-workflows/.github/workflows/github-release.yml@main
