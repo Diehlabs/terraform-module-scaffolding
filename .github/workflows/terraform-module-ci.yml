@@ -1,0 +1,24 @@
+name: Terraform Module CI
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    permissions:
+      contents: write
+      checks: write
+      security-events: write
+    uses: Diehlabs/shared-workflows/.github/workflows/terraform-module.yml@terraform-module-pipeline
+    with:
+      terraform_version: 1.0.8
+      test_directory: tests
+    secrets: inherit
