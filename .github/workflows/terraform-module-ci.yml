@@ -17,7 +17,7 @@ jobs:
       contents: write
       checks: write
       security-events: write
-    uses: Diehlabs/shared-workflows/.github/workflows/terraform-module.yml@v0.2.13
+    uses: Diehlabs/shared-workflows/.github/workflows/terraform-module.yml@0dad30a300167504c240e28f9495d9aba525651c # v0.2.15
     with:
       terraform_version: 1.0.8
       test_directory: tests
